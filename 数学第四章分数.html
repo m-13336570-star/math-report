@@ -1,0 +1,526 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数学笔记：第4章 分数 (Fraction Notes)</title>
+  <!-- 引入 MathJax 引擎 -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+  </script>
+  <style>
+    /* --------------------------------------------------
+       1. 全局样式与科技感深色主题 (Matrix / Cyberpunk Dark UI)
+    -------------------------------------------------- */
+    :root {
+      --bg-dark: #0a0e17;
+      --card-bg: rgba(20, 29, 47, 0.75);
+      --border-color: rgba(0, 210, 255, 0.2);
+      --primary-cyan: #00f0ff;
+      --gold-glow: #ffd700;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --success-green: #2ed573;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(255, 215, 0, 0.05) 0%, transparent 40%);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 20px 10px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Header 样式 */
+    header {
+      text-align: center;
+      margin-bottom: 35px;
+      padding: 25px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      color: var(--primary-cyan);
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* --------------------------------------------------
+       2. 纯 CSS 酷炫特效：微光打卡浮起 & 金光 hover
+    -------------------------------------------------- */
+    .tech-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 25px;
+      backdrop-filter: blur(12px);
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .tech-card:hover {
+      transform: translateY(-8px) scale(1.015);
+      border-color: var(--gold-glow);
+      box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.5),
+        0 0 25px rgba(255, 215, 0, 0.35),
+        inset 0 0 15px rgba(0, 240, 255, 0.1);
+    }
+
+    .tech-card h2 {
+      font-size: 1.4rem;
+      color: var(--primary-cyan);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 8px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tech-card h3 {
+      color: var(--gold-glow);
+      margin: 12px 0 8px 0;
+      font-size: 1.1rem;
+    }
+
+    /* 左右网格布局 */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.6rem; }
+    }
+
+    /* 笔记高亮框 */
+    .note-box {
+      background: rgba(0, 240, 255, 0.05);
+      border-left: 4px solid var(--primary-cyan);
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.95rem;
+    }
+
+    .key-point {
+      color: var(--gold-glow);
+      font-weight: bold;
+    }
+
+    /* --------------------------------------------------
+       3. 练习题交互控制 (点击显示/隐藏答案)
+    -------------------------------------------------- */
+    .example-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    .toggle-btn {
+      background: linear-gradient(135deg, #00f0ff, #0072ff);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+    }
+
+    .toggle-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+    }
+
+    .answer-box {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: rgba(46, 213, 115, 0.1);
+      border: 1px solid var(--success-green);
+      border-radius: 8px;
+      color: #7bed9f;
+      font-size: 0.95rem;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(255, 215, 0, 0.2);
+      color: var(--gold-glow);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- 页头 -->
+  <header>
+    <h1>第 4 章：分数 (Fraction Notes)</h1>
+    <p>⚡ 个人学习与知识梳理笔记 · 核心概念与四则运算法则 ⚡</p>
+  </header>
+
+  <!-- 1. 基本概念 -->
+  <section class="tech-card">
+    <h2>📌 一、 分数的基本概念与代数性质</h2>
+    <div class="grid-2">
+      <div>
+        <h3>1. 定义与表达</h3>
+        <p>把单位“1”平均分成 <span class="key-point">b</span> 份，表示其中 <span class="key-point">a</span> 份的数，称为<b>分数</b>。</p>
+        <div class="note-box">
+          <b>代数表达：</b> $\frac{a}{b}$ （其中 $a$ 为分子，$b$ 为分母）<br>
+          <b>限制条件：</b>分母 <span class="key-point">$b \neq 0$</span>（零不能作除数）。<br>
+          <b>本质：</b> $a \div b = \frac{a}{b}$
+        </div>
+        <!-- 附带例题 1 -->
+        <div class="example-item">
+          <p><b>例题 1.1：</b> 将除法算式 $5 \div 8$ 改写为分数形式，并指出分子与分母。</p>
+          <button class="toggle-btn" onclick="toggleAnswer('ans_concept_1', this)">显示计算过程</button>
+          <div id="ans_concept_1" class="answer-box">
+            $$\begin{aligned}
+              5 \div 8 &= \frac{5}{8}
+            \end{aligned}$$
+            <b>答：</b>分子为 $5$，分母为 $8$。
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>2. 基本性质 (基本法则)</h3>
+        <p>分数的分子与分母同时乘或除以<b>同一个不为零的数</b>，分数的值不变。</p>
+        <div class="note-box">
+          • <b>约分：</b>分子分母同除以公因数（化简至最简分数）。<br>
+          • <b>扩分：</b>分子分母同乘以大于 1 的整数。<br>
+          • <b>通分：</b>利用基本性质，将异分母分数化为同分母分数（依据最小公倍数 L.C.M.）。
+        </div>
+        <!-- 附带例题 2 -->
+        <div class="example-item">
+          <p><b>例题 1.2（约分）：</b> 将 $\frac{12}{18}$ 化为最简分数。</p>
+          <button class="toggle-btn" onclick="toggleAnswer('ans_concept_2', this)">显示计算过程</button>
+          <div id="ans_concept_2" class="answer-box">
+            $$\begin{aligned}
+              \frac{12}{18} &= \frac{12 \div 6}{18 \div 6} \\
+                            &= \frac{2}{3}
+            \end{aligned}$$
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 分数比较大小 -->
+  <section class="tech-card">
+    <h2>📊 二、 分数比较大小法则</h2>
+    <div class="grid-2">
+      <div>
+        <div class="note-box">
+          <b>1. 同分母：</b> 分母相同，<b>分子越大，分数越大</b>。
+        </div>
+        <div class="example-item">
+          <p><b>例题 2.1：</b> 比较 $\frac{5}{8}$ 与 $\frac{3}{8}$ 的大小。</p>
+          <button class="toggle-btn" onclick="toggleAnswer('ans_comp_1', this)">显示计算过程</button>
+          <div id="ans_comp_1" class="answer-box">
+            <b>解：</b>分母均为 $8$，因为 $5 > 3$，所以：
+            $$\frac{5}{8} > \frac{3}{8}$$
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="note-box">
+          <b>2. 同分子：</b> 分子相同，<b>分母越小，分数反而越大</b>。
+        </div>
+        <div class="example-item">
+          <p><b>例题 2.2：</b> 比较 $\frac{3}{4}$ 与 $\frac{3}{7}$ 的大小。</p>
+          <button class="toggle-btn" onclick="toggleAnswer('ans_comp_2', this)">显示计算过程</button>
+          <div id="ans_comp_2" class="answer-box">
+            <b>解：</b>分子均为 $3$，因为分母 $4 < 7$，所以：
+            $$\frac{3}{4} > \frac{3}{7}$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box" style="margin-top:15px;">
+      <b>3. 异分母：</b> 先通分化为同分母分数，再比较分子大小。
+    </div>
+    <div class="example-item">
+      <p><b>例题 2.3（异分母比较）：</b> 比较 $\frac{2}{3}$ 与 $\frac{3}{5}$ 的大小。</p>
+      <button class="toggle-btn" onclick="toggleAnswer('ans_comp_3', this)">显示计算过程</button>
+      <div id="ans_comp_3" class="answer-box">
+        <p><b>解：</b>先通分，求得 $\text{LCM}(3,5) = 15$</p>
+        $$\begin{aligned}
+          \frac{2}{3} &= \frac{10}{15} \\
+          \frac{3}{5} &= \frac{9}{15}
+        \end{aligned}$$
+        因为 $10 > 9$，所以：
+        $$\frac{2}{3} > \frac{3}{5}$$
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 分数分类 -->
+  <section class="tech-card">
+    <h2>🏷️ 三、 分数的分类</h2>
+    <div class="grid-2">
+      <div class="example-item">
+        <span class="tag">真分数</span> <b>分子 &lt; 分母</b>
+        <p style="margin-top:4px; color: var(--text-muted);">数值小于 1。</p>
+        <button class="toggle-btn" onclick="toggleAnswer('ans_type_1', this)">例题展示</button>
+        <div id="ans_type_1" class="answer-box">
+          <b>例：</b> $\frac{3}{5}$ （分子 $3$ 小于分母 $5$）
+        </div>
+      </div>
+
+      <div class="example-item">
+        <span class="tag">假分数</span> <b>分子 &ge; 分母</b>
+        <p style="margin-top:4px; color: var(--text-muted);">数值大于等于 1。</p>
+        <button class="toggle-btn" onclick="toggleAnswer('ans_type_2', this)">例题展示</button>
+        <div id="ans_type_2" class="answer-box">
+          <b>例：</b> $\frac{7}{4}$ 或 $\frac{5}{5}$
+        </div>
+      </div>
+
+      <div class="example-item">
+        <span class="tag">带分数</span> <b>整数 + 真分数</b>
+        <p style="margin-top:4px; color: var(--text-muted);">由整数与真分数组合而成。</p>
+        <button class="toggle-btn" onclick="toggleAnswer('ans_type_3', this)">例题展示</button>
+        <div id="ans_type_3" class="answer-box">
+          <b>例：</b> 将假分数 $\frac{7}{4}$ 化为带分数：
+          $$\begin{aligned}
+            \frac{7}{4} &= 7 \div 4 \\
+                        &= 1\frac{3}{4}
+          \end{aligned}$$
+        </div>
+      </div>
+
+      <div class="example-item">
+        <span class="tag">最简分数</span> <b>分子分母互质</b>
+        <p style="margin-top:4px; color: var(--text-muted);">最大公因数 $\gcd(a,b) = 1$。</p>
+        <button class="toggle-btn" onclick="toggleAnswer('ans_type_4', this)">例题展示</button>
+        <div id="ans_type_4" class="answer-box">
+          <b>例：</b> $\frac{4}{9}$ （$4$ 与 $9$ 的最大公因数为 $1$）
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 四则运算 -->
+  <section class="tech-card">
+    <h2>⚡ 四、 四则运算法则</h2>
+    <div class="grid-2">
+      <div>
+        <h3>➕ ➖ 加运算与减运算</h3>
+        <p>• <b>同分母：</b>分母不变，分子直接相加减。</p>
+        <p>• <b>异分母：</b>先<b>通分</b>（求分母最小公倍数），再按同分母法则计算。</p>
+        
+        <!-- 例题 4.1：加法 -->
+        <div class="example-item">
+          <p><b>例题 4.1（加法）：</b> 计算 $\frac{2}{5} + \frac{1}{3}$</p>
+          <button class="toggle-btn" onclick="toggleAnswer('ans_calc_add', this)">显示计算过程</button>
+          <div id="ans_calc_add" class="answer-box">
+            <p><b>解：</b>$\text{LCM}(5,3) = 15$</p>
+            $$\begin{aligned}
+              \text{原式} &= \frac{6}{15} + \frac{5}{15} \\
+                          &= \frac{6 + 5}{15} \\
+                          &= \frac{11}{15}
+            \end{aligned}$$
+          </div>
+        </div>
+
+        <!-- 例题 4.2：减法 -->
+        <div class="example-item">
+          <p><b>例题 4.2（减法）：</b> 计算 $\frac{5}{6} - \frac{1}{4}$</p>
+          <button class="toggle-btn" onclick="toggleAnswer('ans_calc_1', this)">显示计算过程</button>
+          <div id="ans_calc_1" class="answer-box">
+            <p><b>解：</b>$\text{LCM}(6,4) = 12$</p>
+            $$\begin{aligned}
+              \text{原式} &= \frac{10}{12} - \frac{3}{12} \\
+                          &= \frac{10 - 3}{12} \\
+                          &= \frac{7}{12}
+            \end{aligned}$$
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3>✖️ ➗ 乘运算与除运算</h3>
+        <p>• <b>乘法：</b>分子相乘作分子，分母相乘作分母（先约分后计算）。</p>
+        <p>• <b>除法：</b>“乘以除数的倒数”。</p>
+        
+        <!-- 例题 4.3：乘法 -->
+        <div class="example-item">
+          <p><b>例题 4.3（乘法）：</b> 计算 $\frac{4}{9} \times \frac{3}{8}$</p>
+          <button class="toggle-btn" onclick="toggleAnswer('ans_calc_2', this)">显示计算过程</button>
+          <div id="ans_calc_2" class="answer-box">
+            <p><b>解：</b>分子与分母交叉约分</p>
+            $$\begin{aligned}
+              \text{原式} &= \frac{4 \times 3}{9 \times 8} \\
+                          &= \frac{1 \times 1}{3 \times 2} \\
+                          &= \frac{1}{6}
+            \end{aligned}$$
+          </div>
+        </div>
+
+        <!-- 例题 4.4：除法 -->
+        <div class="example-item">
+          <p><b>例题 4.4（除法）：</b> 计算 $\frac{3}{5} \div \frac{9}{10}$</p>
+          <button class="toggle-btn" onclick="toggleAnswer('ans_calc_div', this)">显示计算过程</button>
+          <div id="ans_calc_div" class="answer-box">
+            <p><b>解：</b>除以一个数等于乘以它的倒数</p>
+            $$\begin{aligned}
+              \text{原式} &= \frac{3}{5} \times \frac{10}{9} \\
+                          &= \frac{1 \times 2}{1 \times 3} \\
+                          &= \frac{2}{3}
+            \end{aligned}$$
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 繁分数 -->
+  <section class="tech-card">
+    <h2>🌀 五、 繁分数的化简</h2>
+    <p><b>定义：</b>分子或分母中含有分数的表达式。</p>
+    <div class="note-box">
+      <b>常用公式（垂直等号对齐）：</b>
+      $$\begin{aligned}
+        \frac{\frac{a}{b}}{\frac{c}{d}} &= \frac{a}{b} \div \frac{c}{d} \\
+                                        &= \frac{a}{b} \times \frac{d}{c} \\
+                                        &= \frac{ad}{bc}
+      \end{aligned}$$
+    </div>
+
+    <div class="example-item">
+      <p><b>例题 5.1：</b> 化简繁分数 $\frac{\frac{2}{3}}{\frac{4}{5}}$</p>
+      <button class="toggle-btn" onclick="toggleAnswer('ans_complex_1', this)">显示计算过程</button>
+      <div id="ans_complex_1" class="answer-box">
+        <p><b>解：</b>利用除法转换法</p>
+        $$\begin{aligned}
+          \text{原式} &= \frac{2}{3} \div \frac{4}{5} \\
+                      &= \frac{2}{3} \times \frac{5}{4} \\
+                      &= \frac{1 \times 5}{3 \times 2} \\
+                      &= \frac{5}{6}
+        \end{aligned}$$
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 综合典型例题 -->
+  <section class="tech-card">
+    <h2>🎯 六、 综合典型例题与标准书写过程</h2>
+    
+    <div class="example-item">
+      <p><b>例 1（加减综合）：</b> 计算 $\frac{1}{3} + \frac{2}{7}$</p>
+      <button class="toggle-btn" onclick="toggleAnswer('ans1', this)">显示计算过程</button>
+      <div id="ans1" class="answer-box">
+        <p style="margin-bottom: 6px;"><b>解：</b>（最小公倍数 $\text{LCM}(3,7) = 21$）</p>
+        $$\begin{aligned}
+          \text{原式} &= \frac{7}{21} + \frac{6}{21} \\
+                      &= \frac{7 + 6}{21} \\
+                      &= \frac{13}{21}
+        \end{aligned}$$
+      </div>
+    </div>
+
+    <div class="example-item">
+      <p><b>例 2（乘除综合）：</b> 计算 $\frac{7}{10} \div \frac{14}{15}$</p>
+      <button class="toggle-btn" onclick="toggleAnswer('ans2', this)">显示计算过程</button>
+      <div id="ans2" class="answer-box">
+        <p style="margin-bottom: 6px;"><b>解：</b>（除以一个数等于乘以它的倒数）</p>
+        $$\begin{aligned}
+          \text{原式} &= \frac{7}{10} \times \frac{15}{14} \\
+                      &= \frac{1 \times 3}{2 \times 2} \quad (\text{约分}) \\
+                      &= \frac{3}{4}
+        \end{aligned}$$
+      </div>
+    </div>
+
+    <div class="example-item">
+      <p><b>例 3（繁分数综合）：</b> 化简 $\frac{1 + \frac{1}{2}}{2 - \frac{1}{3}}$</p>
+      <button class="toggle-btn" onclick="toggleAnswer('ans3', this)">显示计算过程</button>
+      <div id="ans3" class="answer-box">
+        <p style="margin-bottom: 6px;"><b>解：</b></p>
+        $$\begin{aligned}
+          \text{原式} &= \frac{\frac{3}{2}}{\frac{5}{3}} \\
+                      &= \frac{3}{2} \div \frac{5}{3} \\
+                      &= \frac{3}{2} \times \frac{3}{5} \\
+                      &= \frac{9}{10}
+        \end{aligned}$$
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  function toggleAnswer(id, btn) {
+    var box = document.getElementById(id);
+    
+    if (box.style.display === "block") {
+      box.style.display = "none";
+      btn.innerText = "显示计算过程";
+      btn.style.background = "linear-gradient(135deg, #00f0ff, #0072ff)";
+    } else {
+      box.style.display = "block";
+      btn.innerText = "隐藏过程";
+      btn.style.background = "linear-gradient(135deg, #2ed573, #10ac84)";
+    }
+  }
+</script>
+
+</body>
+</html>
